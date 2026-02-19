@@ -10,7 +10,7 @@ use Filament\Resources\Pages\ViewRecord;
 
 class OrderDetail extends ViewRecord
 {
-    use InteractsWithRecord;
+    //use InteractsWithRecord;
 
     protected static string $resource = OrderResource::class;
 

@@ -580,7 +580,7 @@
         {{-- RIGHT COLUMN --}}
         <div class="order-detail-main-section">
 
-            {{-- CUSTOMER --}}
+            {{-- CUSTOMER 
             <div class="order-detail-card">
                 <div class="order-detail-card-header">
                     <h2 class="order-detail-card-title">Customer</h2>
@@ -600,7 +600,9 @@
                     <span>Phone</span>
                     <span>{{ $this->record->customer_phone }}</span>
                 </div>
+
             </div>
+            --}}
 
             {{-- SHIPPING ADDRESS --}}
             <div class="order-detail-card">
@@ -608,7 +610,13 @@
                     <h2 class="order-detail-card-title">Shipping address</h2>
                 </div>
 
-                @php($shipping = $this->record->shipping_address)
+                @php
+                    $shipping = is_array($this->record->shipping_address)
+                        ? $this->record->shipping_address
+                        : json_decode($this->record->shipping_address, true);
+                @endphp
+
+               
                 <div class="order-address-block">
                     <div class="order-address-name">{{ $shipping['name'] ?? '' }}</div>
                     <div>{{ $shipping['address'] ?? '' }}</div>
@@ -625,10 +633,10 @@
 
                 @php($billing = $this->record->billing_address)
                 <div class="order-address-block">
-                    <div class="order-address-name">{{ $billing['name'] ?? '' }}</div>
-                    <div>{{ $billing['address'] ?? '' }}</div>
-                    <div>{{ $billing['city'] ?? '' }}</div>
-                    <div>{{ $billing['state'] ?? '' }} {{ $billing['pincode'] ?? '' }}</div>
+                    <div class="order-address-name">{{ $billing['name'] ?? $shipping['name'] }}</div>
+                    <div>{{ $billing['address'] ?? $shipping['address'] }}</div>
+                    <div>{{ $billing['city'] ?? $shipping['city'] }}</div>
+                    <div>{{ $billing['state'] ?? $shipping['state'] }} {{ $billing['pincode'] ?? $shipping['pincode'] }}</div>
                 </div>
             </div>
 

@@ -46,9 +46,12 @@
   <div class="row">
   
   <div class="col-lg-8">
+
+  @guest('customer')
   <div class="woocommerce-form-login-toggle">
       <div class="woocommerce-info">Returning customer? <a href="javascript:void(0);" class="showlogin" data-bs-toggle="modal" data-bs-target="#youmyModal">Click here to login</a></div>
     </div>
+   @endguest
    
 	
 <form action="{{ route('checkout.confirm') }}" method="POST" class="woocommerce-checkout mt-40">
