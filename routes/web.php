@@ -53,6 +53,8 @@ Route::get('/testimonials', [TestimonialController::class, 'index'])->name('test
 
 Route::get('/certificate', [CertificateController::class, 'index'])->name('certificate');
 
+Route::post('/certificate/verify', [CertificateController::class, 'verify'])->name('certificate.verify');
+
 Route::get('/privacy-policy', [ContentController::class, 'privacy']);
 Route::get('/terms-and-conditions', [ContentController::class, 'terms']);
 Route::get('/return-policy', [ContentController::class, 'return']);

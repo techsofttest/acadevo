@@ -12,7 +12,10 @@ class CertificateForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
+                TextInput::make('code')
+                    ->required(),
                 TextInput::make('name')
                     ->required(),
                 DatePicker::make('date_of_birth')

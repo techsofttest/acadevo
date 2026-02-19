@@ -25,30 +25,34 @@
  <div class="container">
 <div class="ccerti-inner">
 			
-			<form > 
-		 
-			<div class="row justify-content-center">
+			<form method="POST" action="{{ route('certificate.verify') }}">
+    @csrf
 
-			<div class="col-lg-6 col-md-12 col-sm-6">
-				 
-			<input type="text" name="code" required class="form-control" placeholder="Enter Code"> 
-				 
-			</div>
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <input type="text" name="code" required 
+                   class="form-control" 
+                   placeholder="Enter Code">
+        </div>
+    </div>
 
-			</div>
-			
+    <div class="row justify-content-center">
+        <div class="col-lg-6 my-3">
+            <button type="submit" class="th-btn style3 w-100">
+                Verify And Download
+            </button>
+        </div>
+    </div>
+</form>
 
-			<div class="row justify-content-center">
-				  
-			<div class="col-lg-6 col-md-6 col-sm-6 my-3">
-				 
-			<button type="button" class="th-btn style3 w-100" onclick="openDiv()">Verify And Download</button>
-				 
-			</div>
+@if(session('error'))
+    <div class="alert alert-danger text-center">
+        {{ session('error') }}
+    </div>
+@endif
 
-			</div>
-			
-			</form>
+
+
 			</div>
 			
 			

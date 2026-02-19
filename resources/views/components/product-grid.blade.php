@@ -48,11 +48,17 @@
                 <h3 class="box-title"><a href="">{{$product->name}}</a></h3>
         <span class="box-price"><del>₹ {{$product->original_price}}</del> ₹ {{$product->offer_price}}</span>
 
-        <a href="javascript:void(0);" data-id="{{$product->id}}" class="th-btn2 btn-fw addToCartBtn">
-                
-        <span >Add To Cart</span> 
-        
-        </a>
+                @if($product->is_active)
+                <a href="javascript:void(0);" 
+                data-id="{{ $product->id }}" 
+                class="th-btn2 btn-fw addToCartBtn">
+                        <span>Add To Cart</span>
+                </a>
+                @else
+                <button class="th-btn2 btn-fw" disabled>
+                        <span>Out of Stock</span>
+                </button>
+                @endif
         
         </div>
         </div>

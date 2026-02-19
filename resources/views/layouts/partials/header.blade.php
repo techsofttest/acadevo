@@ -276,7 +276,7 @@
 
 <li  ><a href="{{url('/')}}">Home</a>  </li>
 
-<li class="menu-item-has-children"><a href="{{url('products')}}">Products</a>
+<li class="menu-item-has-children"><a href="{{url('products')}}">Categories</a>
 
                                         <ul class="mega-menu mega-menu-content">
 
@@ -321,12 +321,15 @@
                                             </li>
                                         </ul>
                                     </li>
+
+
+  <li  ><a href="{{url('products')}}">Products</a>  </li>
                             
-  <li  ><a href="{{url('about')}}">About Us</a>  </li>
+  <li  ><a href="{{url('about')}}">About</a>  </li>
     <li  ><a href="{{url('services')}}">Services</a>  </li>
 
 	  <li  ><a href="{{url('testimonials')}}">Testimonials</a>  </li>
-	    <li  ><a href="{{url('contact')}}">Contact Us</a>  </li>
+	    <li  ><a href="{{url('contact')}}">Contact</a>  </li>
                                 </ul>
                             </nav>
                             <div class="header-logo d-block d-lg-none"><a href="{{url('/')}}"> <h3>Acadevo </h3></a></div>

@@ -74,7 +74,7 @@
                                         class="cartQtyInput"
                                         data-key="{{ $item['key'] }}"
                                         value="{{ $item['qty'] }}"
-                                        min="1">
+                                        min="1" readonly>
                                 </div>
                             </div>
                         </td>
@@ -233,10 +233,10 @@
 $(document).ready(function(){
 
     // Update quantity
-    $(document).on('change', '.cartQtyInput', function(){
+    $(document).on('click', '.qtybtn', function(){
 
-        let key = $(this).data('key');
-        let qty = $(this).val();
+        let key = $('.cartQtyInput').data('key');
+        let qty = $('.cartQtyInput').val();
 
         $.post("{{ route('cart.update') }}", {
             key: key,

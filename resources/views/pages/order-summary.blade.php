@@ -396,25 +396,20 @@
             </li>
 
             <li class="list-group-item d-flex justify-content-between">
-                <span>Payment Status</span>
+                <span>Payment Method</span>
                 <strong class="text-capitalize">
-                    {{ $order->payment_status }}
+                    {{ $order->payment_method }}
                 </strong>
             </li>
 
             <li class="list-group-item d-flex justify-content-between">
                 <span>Total Amount</span>
                 <strong>
-                    {{ $order->currency }} {{ number_format($order->total, 2) }}
+                    ₹ {{ number_format($order->total, 2) }}
                 </strong>
             </li>
 
-            <li class="list-group-item d-flex justify-content-between">
-                <span>Estimated Delivery</span>
-                <span>
-                    {{ $order->placed_at->addDays(5)->format('M d, Y') }}
-                </span>
-            </li>
+            
         </ul>
 
           <div class="d-grid gap-2">

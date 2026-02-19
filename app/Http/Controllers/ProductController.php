@@ -26,7 +26,6 @@ class ProductController extends Controller
 
     $data['categories'] = Category::with('children')
     ->whereNull('parent_id')
-    ->where('is_active', true)
     ->get();
 
     $data['products'] = Product::where('is_active',1)->get();
@@ -84,13 +83,12 @@ class ProductController extends Controller
 
 
 
-    public function category($slug, $slug2 = null)
+   public function category($slug, $slug2 = null)
 {
-    // Parent Category
     $category = Category::where('slug', $slug)->firstOrFail();
 
     if ($slug2) {
-        // Subcategory case
+        // Subcategory
         $subcategory = Category::where('slug', $slug2)
             ->where('parent_id', $category->id)
             ->firstOrFail();
@@ -98,9 +96,18 @@ class ProductController extends Controller
         $products = Product::where('category_id', $subcategory->id)->get();
 
         $title = $subcategory->name;
+
     } else {
-        // Main category case
-        $products = Product::where('category_id', $category->id)->get();
+
+        // ✅ Get all subcategory IDs
+        $subcategoryIds = Category::where('parent_id', $category->id)
+            ->pluck('id')
+            ->toArray();
+
+        // Include parent ID also
+        $allCategoryIds = array_merge([$category->id], $subcategoryIds);
+
+        $products = Product::whereIn('category_id', $allCategoryIds)->get();
 
         $title = $category->name;
     }
@@ -126,7 +133,6 @@ class ProductController extends Controller
 
     $relatedProducts = Product::where('category_id', $product->category_id)
         ->where('id', '!=', $product->id)
-        ->where('is_active', true)
         ->limit(8)
         ->get();
 
@@ -170,8 +176,8 @@ class ProductController extends Controller
 
     public function ajaxList(Request $request)
     {
+    
     $products = Product::query()
-        ->where('is_active', true)
 
         ->when($request->search, function ($q) use ($request) {
             $q->where('name', 'like', '%' . $request->search . '%');
@@ -210,7 +216,7 @@ class ProductController extends Controller
         ]);
         }
 
-    $html = view('products._list', compact('products'))->render();
+    $html = view('components.product-grid', compact('products'))->render();
 
     return response()->json(['html' => $html]);
     }

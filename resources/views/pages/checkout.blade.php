@@ -63,7 +63,7 @@
 
         <div class="row">
 
-            <div class="col-md-6 form-group">
+            <div class="col-md-12 form-group">
                 <input type="text"
                        name="shipping_address[name]"
                        class="form-control"
@@ -87,14 +87,6 @@
                        required>
             </div>
 
-            <div class="col-md-6 form-group">
-                <input type="text"
-                       name="shipping_address[pincode]"
-                       class="form-control"
-                       placeholder="Pincode"
-                       required>
-            </div>
-
             <div class="col-md-12 form-group">
                 <input type="text"
                        name="shipping_address[address]"
@@ -103,6 +95,7 @@
                        required>
             </div>
 
+
             <div class="col-md-6 form-group">
                 <input type="text"
                        name="shipping_address[city]"
@@ -110,6 +103,7 @@
                        placeholder="City"
                        required>
             </div>
+            
 
             <div class="col-md-6 form-group">
                 <input type="text"
@@ -118,6 +112,16 @@
                        placeholder="State"
                        required>
             </div>
+
+
+             <div class="col-md-6 form-group">
+                <input type="text"
+                       name="shipping_address[pincode]"
+                       class="form-control"
+                       placeholder="Pincode"
+                       required>
+            </div>
+
 
         </div>
     </div>

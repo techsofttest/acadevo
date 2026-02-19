@@ -33,6 +33,15 @@ class ProductsTable
                     // This runs automatically when toggled
                     $record->update(['is_active' => $state]);
                 }),
+
+                ToggleColumn::make('is_active')
+                ->label('In Stock')
+                ->sortable()
+                ->toggleable()
+                ->afterStateUpdated(function ($record, $state) {
+                    $record->update(['is_active' => $state]);
+                }),
+
                 ToggleColumn::make('featured')
                 ->label('Featured')
                 ->sortable()
@@ -40,6 +49,7 @@ class ProductsTable
                 ->afterStateUpdated(function ($record, $state) {
                     $record->update(['featured' => $state]);
                 }),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

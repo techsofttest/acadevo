@@ -60,6 +60,13 @@
   animation-name: l7-1;
 }
 
+.loader {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 @keyframes l7-0 {
  16.67% {background-size:8px 30%, 8px 30%, 8px 50%, 8px 50%, 8px 50%, 8px 50%}
  33.33% {background-size:8px 30%, 8px 30%, 8px 30%, 8px 30%, 8px 50%, 8px 50%}
@@ -123,7 +130,7 @@
                 <section class="filter-item-inner">
 
                     <h3 class="filter-item-inner-heading minus">
-                        <a href="#">
+                        <a href="javascript:void(0);">
                             {{ $category->name }}
                         </a>
                     </h3>
@@ -252,7 +259,8 @@
 
 <script>
 let ajaxRequest = null;
-let requestCounter = 0;   // Track latest request
+let requestCounter = 0;
+let debounceTimer = null; 
 
 function loadProducts(filters = {}) {
 

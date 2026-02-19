@@ -47,8 +47,8 @@
                   @foreach($categories as $category)
                   <div class="swiper-slide">
                   <div class="head_rounded">
-                  <div class="cat-img"><a href="product-category.html"  ><img src="{{asset('storage')}}/{{$category->image}}" alt=""></a></div>
-                  <h3 class="cat-name"><a class="text-inherit" href="product-category.html"  >{{$category->name}}</a></h3>
+                  <div class="cat-img"><a href="{{url('category')}}/{{$category->slug}}"  ><img src="{{asset('storage')}}/{{$category->image}}" alt=""></a></div>
+                  <h3 class="cat-name"><a class="text-inherit" href="{{url('category')}}/{{$category->slug}}"  >{{$category->name}}</a></h3>
                   </div>
                   </div>
                   @endforeach
