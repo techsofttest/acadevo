@@ -79,7 +79,7 @@
 
             <td class="product-td-full">
                 <p class="price-carttablee">
-                    {{ $order->currency }} {{ number_format($item->total, 2) }}
+                    ₹ {{ number_format($item->total, 2) }}
                 </p>
             </td>
 
@@ -102,7 +102,7 @@
 
             <td>
                 <p class="price-carttablee">
-                    {{ $order->currency }} {{ number_format($order->total, 2) }}
+                    ₹ {{ number_format($order->total, 2) }}
                 </p>
             </td>
 

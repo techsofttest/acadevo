@@ -19,7 +19,7 @@ use App\Http\Controllers\Auth\CustomerLoginController;
 use App\Http\Controllers\Auth\CustomerPasswordController;
 use App\Http\Controllers\Customer\WishlistController;
 use App\Http\Controllers\Customer\ProfileController;
-use App\Http\Controllers\Customer\CertificateController;
+use App\Http\Controllers\CertificateController;
 
 
 Route::get('/',[Homecontroller::class,'index'])->name('home');

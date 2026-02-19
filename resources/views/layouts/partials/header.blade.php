@@ -176,11 +176,13 @@
                                 @endif
 
 
+                                @if($customer)
 								   <div class="header-info">
                                     <a href="{{url('wishlist')}}" class="icon-btn"><i  style="top: 4px;
     position: relative;" class="fa fa-heart"></i></a>
                                     
                                 </div>
+                                @endif
                             
                             </div>
                         </div>
@@ -274,7 +276,7 @@
 
 <li  ><a href="{{url('/')}}">Home</a>  </li>
 
-<li class="menu-item-has-children"><a href="javascript:void(0);">Products</a>
+<li class="menu-item-has-children"><a href="{{url('products')}}">Products</a>
 
                                         <ul class="mega-menu mega-menu-content">
 

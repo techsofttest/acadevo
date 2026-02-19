@@ -1,3 +1,3 @@
 @foreach($products as $product)
-    @include('products._item', ['product' => $product])
+    @include('components.product-grid', ['product' => $product])
 @endforeach

@@ -17,7 +17,7 @@
                                     <div class="hero-style2"> 
                                         <h1 class="hero-title" data-ani="slideinup" data-ani-delay="0.4s">Best Boards, Robotics & Electronics Products</h1>
                                         <p class="price" data-ani="slideinup" data-ani-delay="0.6s"> Free Shipping On Order ₹1000+</p>
-                                        <div class="btn-group" data-ani="slideinup" data-ani-delay="0.7s"><a href="products.html" class="th-btn btn-white style3">Buy Now</a></div>
+                                        <div class="btn-group" data-ani="slideinup" data-ani-delay="0.7s"><a href="{{url('products')}}" class="th-btn btn-white style3">Buy Now</a></div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -182,7 +182,7 @@
              {{ \Illuminate\Support\Str::words(strip_tags($service->description), 50, '…') }}
             </p>
             
-            <a href="services.html" class="th-btn black-btn th-icon">Read More</a></div>
+            <a href="{{url('services')}}" class="th-btn black-btn th-icon">Read More</a></div>
                     </div>
                 </div>
 

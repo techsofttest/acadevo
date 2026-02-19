@@ -51,18 +51,12 @@
                         {{ $item->product->name }}
                     </a>
 
-                    @if ($item->color_name)
-                        <p>Color: {{ $item->color_name }}</p>
-                    @endif
-
-                    @if ($item->size_name)
-                        <p>Size: {{ $item->size_name }}</p>
-                    @endif
+                   
                 </td>
 
                 <td class="product-td-full cat-min-tdr">
                     <span class="amount">
-                        <bdi>€ {{ number_format($item->price, 2) }}</bdi>
+                        <bdi>₹ {{ number_format($item->price, 2) }}</bdi>
                     </span>
                 </td>
             </tr>
@@ -73,14 +67,14 @@
         <tfoot class="checkout-ordertable mob-chec-table">
             <tr>
                 <th>Subtotal</th>
-                <td colspan="4">€ {{ number_format($order->subtotal, 2) }}</td>
+                <td colspan="4">₹ {{ number_format($order->subtotal, 2) }}</td>
             </tr>
 
             <tr>
                 <th>Shipping</th>
                 <td colspan="4">
                     {{ $order->shipping_amount > 0 
-                        ? '€ ' . number_format($order->shipping_amount, 2) 
+                        ? '₹ ' . number_format($order->shipping_amount, 2) 
                         : 'Free shipping' }}
                 </td>
             </tr>
@@ -103,7 +97,7 @@
                     <strong>
                         <span class="woocommerce-Price-amount amount">
                             <bdi class="main-total">
-                                € {{ number_format($order->total, 2) }}
+                                ₹ {{ number_format($order->total, 2) }}
                             </bdi>
                         </span>
                     </strong>
@@ -120,7 +114,7 @@
       
 		
 		
-		<div class="row">
+	<div class="row">
     <div class="col-lg-6">
         <div class="saveaddress">
             <h4>Billing address</h4>

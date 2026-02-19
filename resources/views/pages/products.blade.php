@@ -204,7 +204,7 @@
   
   <div class="row align-items-center justify-content-between">
   <div class="col-auto">
-  <p class="ff-right-result-p">31 products</p>
+  <!-- <p class="ff-right-result-p">31 products</p> -->
   </div>
     <div class="col-auto">
 
@@ -251,18 +251,45 @@
 
 
 <script>
+let ajaxRequest = null;
+let requestCounter = 0;   // Track latest request
+
 function loadProducts(filters = {}) {
-    $.ajax({
+
+    requestCounter++; // Increment for each call
+    let currentRequest = requestCounter;
+
+    if (ajaxRequest !== null) {
+        ajaxRequest.abort();
+    }
+
+    ajaxRequest = $.ajax({
         url: "{{ route('products.ajax') }}",
         data: filters,
         beforeSend: function () {
             $('#product-list').html('<div class="loader"></div>');
         },
         success: function (res) {
+
+            // Ignore old responses
+            if (currentRequest !== requestCounter) {
+                return;
+            }
+
             $('#product-list').html(res.html);
         }
     });
 }
+
+// Debounce function (wait before firing)
+function debounceLoad(filters) {
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(function () {
+        loadProducts(filters);
+    }, 400); // wait 400ms after user stops dragging
+}
+
 
 // Initial load
 $(document).ready(function () {
@@ -271,14 +298,15 @@ $(document).ready(function () {
 
 // Search
 $('#search-input').on('keyup', function () {
-    loadProducts({
+    debounceLoad({
         search: $(this).val()
     });
 });
 
-// Filters
-$('.filter-input').on('change', function () {
-    loadProducts({
+// Filters including slider
+$('.filter-input').on('input change', function () {
+
+    debounceLoad({
         categories: $('.category-filter:checked').map(function () {
             return this.value;
         }).get(),
@@ -287,6 +315,7 @@ $('.filter-input').on('change', function () {
         search: $('#search-input').val(),
         sort: $('#sort').val()
     });
+
 });
 </script>
 

@@ -8,7 +8,7 @@ class CertificateController extends Controller
 {
      public function index()
     {
-        return view('pages.certificate',$data);
+        return view('pages.certificate');
 
     }
 }

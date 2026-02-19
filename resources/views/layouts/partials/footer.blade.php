@@ -77,12 +77,59 @@
                             <div class="widget widget_nav_menu footer-line footer-widget">
                                 <h3 class="widget_title">My Account</h3>
                                 <div class="menu-all-pages-container">
+
                                     <ul class="menu">
-                                        <li><a href="#" data-bs-toggle="modal" data-bs-target="#youmyModal">Login/Register</a></li>
-                                        <li><a href="my-account.html">My Account</a></li>
- <li><a href="cart.html">My Cart</a></li>
- <li><a href="wishlist.html">My Wishlist</a></li>
-                                    </ul>
+
+    @guest('customer')
+
+        <li>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#youmyModal">
+                Login/Register
+            </a>
+        </li>
+
+        <li>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#youmyModal">
+                My Account
+            </a>
+        </li>
+
+        <li>
+           <a href="{{ route('cart.view') }}">
+                Cart
+            </a>
+        </li>
+
+        <li>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#youmyModal">
+                My Wishlist
+            </a>
+        </li>
+
+    @else
+
+        <li>
+            <a href="{{ route('customer.profile') }}">
+                My Account
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ route('cart.view') }}">
+                Cart
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ route('customer.wishlist') }}">
+                My Wishlist
+            </a>
+        </li>
+
+    @endguest
+
+</ul>
+
                                 </div>
                             </div>
                         </div>
