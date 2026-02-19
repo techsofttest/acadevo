@@ -42,10 +42,6 @@ public function placeOrder(Request $request)
 {
     $customer = Auth::guard('customer')->user();
 
-    if (!$customer) {
-        return redirect()->route('customer.login');
-    }
-
     $cart = session('cart', []);
 
     if (empty($cart)) {
