@@ -65,7 +65,7 @@
                                     <ul class="menu">
 
                                     @foreach($header_categories as $footercategory)
-                                    <li><a href="product-category.html">Robotics</a></li>
+                                    <li><a href="{{url('category')}}/{{$footercategory->slug}}">{{$footercategory->name}}</a></li>
                                     @endforeach
 
                                     </ul>
