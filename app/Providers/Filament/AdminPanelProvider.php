@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             //->brandLogo(asset('admin/logo.png'))
-            ->login()
+            ->login()  
 			->profile()
             ->spa()
             ->colors([
@@ -44,6 +44,11 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\OrdersOverview::class,
                 \App\Filament\Widgets\OrdersCountChart::class,
                 \App\Filament\Widgets\SalesChart::class,
+            ])
+             ->navigationGroups([
+                'Training Programs',
+                'Shop',
+                'CMS',
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -9,6 +9,7 @@ use App\Filament\Resources\Coupons\Schemas\CouponForm;
 use App\Filament\Resources\Coupons\Tables\CouponsTable;
 use App\Models\Coupon;
 use BackedEnum;
+use UnitENum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -21,6 +22,11 @@ class CouponResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPercentBadge;
 
     protected static ?string $recordTitleAttribute = 'Coupons';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Shop';
+
+
+     protected static ?int $navigationGroupSort = 2;
 
      protected static ?int $navigationSort = 4;
 

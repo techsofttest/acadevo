@@ -9,6 +9,7 @@ use App\Filament\Resources\Offers\Schemas\OfferForm;
 use App\Filament\Resources\Offers\Tables\OffersTable;
 use App\Models\Offer;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,9 +19,11 @@ class OfferResource extends Resource
 {
     protected static ?string $model = Offer::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGift;
 
     protected static ?string $recordTitleAttribute = 'Offer';
+
+    protected static string | UnitEnum | null $navigationGroup = 'CMS';
 
     public static function form(Schema $schema): Schema
     {

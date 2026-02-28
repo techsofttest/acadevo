@@ -23,12 +23,15 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\View;
+use UnitEnum;
 
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingCart;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Shop';
 
     protected static ?string $recordTitleAttribute = 'Orders';
 

@@ -1,34 +1,32 @@
 <?php
 
-namespace App\Filament\Resources\Testimonials;
+namespace App\Filament\Resources\Courses;
 
-use App\Filament\Resources\Testimonials\Pages\ManageTestimonials;
-use App\Models\Testimonial;
+use App\Filament\Resources\Courses\Pages\ManageCourses;
+use App\Models\Course;
 use BackedEnum;
-use UnitEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
-class TestimonialResource extends Resource
+
+class CourseResource extends Resource
 {
-    protected static ?string $model = Testimonial::class;
+    protected static ?string $model = Course::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
 
-    protected static ?string $recordTitleAttribute = 'Testimonials';
-
-    protected static string | UnitEnum | null $navigationGroup = 'CMS';
+    
+    protected static string | UnitEnum | null $navigationGroup = 'Training Programs';
 
     public static function form(Schema $schema): Schema
     {
@@ -37,24 +35,17 @@ class TestimonialResource extends Resource
             ->components([
                 TextInput::make('name')
                     ->required(),
-                Textarea::make('review')
-                    ->required(),
-                FileUpload::make('image')
-                    ->image(),
-                
+                Textarea::make('description')
+                    ->columnSpanFull(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('Testimonials')
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('review')
-                    ->searchable(),
-                ImageColumn::make('image'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -81,7 +72,7 @@ class TestimonialResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageTestimonials::route('/'),
+            'index' => ManageCourses::route('/'),
         ];
     }
 }

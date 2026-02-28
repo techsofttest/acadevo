@@ -9,6 +9,7 @@ use App\Filament\Resources\Contents\Schemas\ContentForm;
 use App\Filament\Resources\Contents\Tables\ContentsTable;
 use App\Models\Content;
 use BackedEnum;
+use UnitENum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -20,9 +21,11 @@ class ContentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'CMS';
+    protected static ?string $recordTitleAttribute = 'Contents';
 
-     protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 7;
+
+     protected static string | UnitEnum | null $navigationGroup = 'CMS';
 
     public static function form(Schema $schema): Schema
     {

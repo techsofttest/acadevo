@@ -18,11 +18,13 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationLabel = 'Customers';
+    protected static ?string $navigationLabel = 'Users';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static ?string $recordTitleAttribute = 'Customers';
+    protected static ?string $recordTitleAttribute = 'Users';
+
+    protected static bool $shouldRegisterNavigation = false;
 
      protected static ?int $navigationSort = 6;
 
