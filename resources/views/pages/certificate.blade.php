@@ -29,11 +29,19 @@
     @csrf
 
     <div class="row justify-content-center">
+
         <div class="col-lg-6">
             <input type="text" name="code" required 
                    class="form-control" 
-                   placeholder="Enter Code">
+                   placeholder="Enter Lab Code" required>
         </div>
+
+        <div class="col-lg-6">
+            <input type="text" name="name" required 
+                   class="form-control" 
+                   placeholder="Enter Name" required>
+        </div>
+
     </div>
 
     <div class="row justify-content-center">

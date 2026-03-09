@@ -16,6 +16,8 @@ class InstituteForm
         return $schema
             ->columns(1)
             ->components([
+                TextInput::make('lab_code')
+                    ->required(),
                 TextInput::make('name')
                     ->required(),
                 TextInput::make('contact_person')->label('Contact Person Name'),

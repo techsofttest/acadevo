@@ -22,16 +22,16 @@
 
     <p>This is to certify that</p>
 
-    <h2>{{ $certificate->name }}</h2>
+    <h2>{{ $student->full_name }}</h2>
 
     <p>
-        Date of Birth: {{ $certificate->date_of_birth }} <br>
-        College: {{ $certificate->college }}
+        Division / Class: {{ $student->division }} <br>
+        College: {{ $student->institute->name }}
     </p>
 
-    <p>
-        Certificate Code: {{ $certificate->code }}
-    </p>
+    <p>Has attended the courses at Acadevo</p>
+
+
 
 </body>
 </html>

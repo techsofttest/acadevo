@@ -35,7 +35,7 @@ class StudentForm
                             ->required(),
 
                         TextInput::make('division')
-                            ->label('Division'),
+                            ->label('Division / Class'),
 
                         TextInput::make('roll_number'),
 

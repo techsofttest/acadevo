@@ -17,7 +17,7 @@ class InstitutesTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('type'),
+                TextColumn::make('lab_code'),
                 TextColumn::make('contact_person')
                     ->searchable(),
                 TextColumn::make('phone')

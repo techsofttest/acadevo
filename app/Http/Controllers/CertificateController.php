@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Certificate;
+use App\Models\Student;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class CertificateController extends Controller
@@ -20,18 +20,26 @@ class CertificateController extends Controller
     public function verify(Request $request)
     {
         $request->validate([
-            'code' => 'required'
+            'code' => 'required',
+            'name' => 'required'
         ]);
 
-        $certificate = Certificate::where('code', $request->code)->first();
+        $student = Student::whereRaw('LOWER(full_name) = ?', [strtolower(trim($request->name))])
+        ->whereHas('institute', function ($q) use ($request) {
+            $q->where('lab_code', trim($request->code));
+        })
+        ->with('institute')
+        ->first();
 
-        if (!$certificate) {
-            return redirect()->back()->with('error', 'Invalid Certificate Code!');
+        if (!$student) {
+            return redirect()->back()->with('error', 'Invalid Student Details!');
         }
 
-        $pdf = Pdf::loadView('pages.certificate-pdf', compact('certificate'));
 
-        return $pdf->download('certificate-'.$certificate->code.'.pdf');
+        $pdf = Pdf::loadView('pages.certificate-pdf', compact('student'));
+
+        return $pdf->download('certificate-'.$student->id.'.pdf');
+
     }
 
 
