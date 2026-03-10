@@ -24,7 +24,7 @@
  <div class="Certificate-sec">
  <div class="container ">
 
-<div class="col-8 mx-auto justify-content-center">
+<div class="col-12 col-lg-8 mx-auto justify-content-center">
 
 <div class="ccerti-inner">
 			
