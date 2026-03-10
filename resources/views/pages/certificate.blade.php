@@ -22,25 +22,39 @@
 	
  
  <div class="Certificate-sec">
- <div class="container">
+ <div class="container ">
+
+<div class="col-8 mx-auto justify-content-center">
+
 <div class="ccerti-inner">
 			
 			<form method="POST" action="{{ route('certificate.verify') }}">
     @csrf
 
+
     <div class="row justify-content-center">
 
-        <div class="col-lg-6">
-            <input type="text" name="code" required 
-                   class="form-control" 
-                   placeholder="Enter Lab Code" required>
-        </div>
-
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <input type="text" name="name" required 
                    class="form-control" 
                    placeholder="Enter Name" required>
         </div>
+
+    </div>
+
+    <div class="row my-5 justify-content-center">
+
+    <div class="col-lg-6">
+            <input type="text" name="code" required 
+                   class="form-control" 
+                   placeholder="Enter Lab Code" required>
+    </div>
+
+    <div class="col-lg-6">
+            <input type="text" name="class" required 
+                   class="form-control" 
+                   placeholder="Enter Class" required>
+    </div>
 
     </div>
 
@@ -51,6 +65,7 @@
             </button>
         </div>
     </div>
+
 </form>
 
 @if(session('error'))
@@ -73,6 +88,10 @@
 		 
  <img src="assets/img/certificate.webp" alt="" width="100%">
 </div>
+
+
+</div>
+
  </div>
  
  </div>

@@ -21,10 +21,12 @@ class CertificateController extends Controller
     {
         $request->validate([
             'code' => 'required',
-            'name' => 'required'
+            'name' => 'required',
+            'class' => 'required',
         ]);
 
         $student = Student::whereRaw('LOWER(full_name) = ?', [strtolower(trim($request->name))])
+        ->whereRaw('LOWER(division) = ?', [strtolower(trim($request->class))])
         ->whereHas('institute', function ($q) use ($request) {
             $q->where('lab_code', trim($request->code));
         })
