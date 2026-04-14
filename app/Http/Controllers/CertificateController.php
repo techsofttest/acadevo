@@ -30,7 +30,7 @@ class CertificateController extends Controller
         ->whereHas('institute', function ($q) use ($request) {
             $q->where('lab_code', trim($request->code));
         })
-        ->with('institute')
+        ->with(['institute', 'studentCourses.course'])
         ->first();
 
         if (!$student) {
@@ -40,7 +40,8 @@ class CertificateController extends Controller
 
         $pdf = Pdf::loadView('pages.certificate-pdf', compact('student'));
 
-        return $pdf->download('certificate-'.$student->id.'.pdf');
+        // Use stream() to preview in browser temporarily for designing
+        return $pdf->stream('certificate-'.$student->id.'.pdf');
 
     }
 
