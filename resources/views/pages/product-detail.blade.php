@@ -320,8 +320,8 @@
 
 @endsection
 
-@section('footer_extars')
+@section('footer_extras')
 
-
+<script src="{{asset('js/mains.js')}}"></script>
 
 @endsection

@@ -235,16 +235,20 @@ $(document).ready(function(){
     // Update quantity
     $(document).on('click', '.qtybtn', function(){
 
-        let key = $('.cartQtyInput').data('key');
-        let qty = $('.cartQtyInput').val();
+        let row = $(this).closest('tr');
+        let input = row.find('.cartQtyInput');
+        let key = input.data('key');
+        let qty = input.val();
 
-        $.post("{{ route('cart.update') }}", {
-            key: key,
-            qty: qty,
-            _token: "{{ csrf_token() }}"
-        }, function(response){
-            location.reload(); // simple version
-        });
+        if (key && qty) {
+            $.post("{{ route('cart.update') }}", {
+                key: key,
+                qty: qty,
+                _token: "{{ csrf_token() }}"
+            }, function(response){
+                location.reload(); // simple version
+            });
+        }
 
     });
 
