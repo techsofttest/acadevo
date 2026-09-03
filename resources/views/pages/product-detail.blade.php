@@ -268,7 +268,7 @@
             <h2 class="sec-title style1">Related Products</h2>
         </div>
 
-        <div class="swiper th-slider productSlide8">
+        <div class="swiper th-slider productSlide8" data-slider-options='{"spaceBetween":16,"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":2},"992":{"slidesPerView":3},"1200":{"slidesPerView":4}}}'>
             <div class="swiper-wrapper">
 
                 @foreach($relatedProducts as $related)
