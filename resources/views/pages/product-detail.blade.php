@@ -143,7 +143,7 @@
                             <li>
                                 Availability:
                                 <span>
-                                    {{ ($product->stock ?? 0) > 0 ? 'In Stock' : 'Out of stock' }}
+                                    {{ ($product->stock ?? 0) > 0 || $product->is_active ? 'In Stock' : 'Out of stock' }}
                                 </span>
                             </li>
                         </ul>
@@ -277,8 +277,14 @@
 
                             <div class="box-img">
                                 <a href="{{ route('product.show', $related->slug) }}">
-                                    <img src="{{ asset('storage/products/'.$related->image) }}">
+                                    <img src="{{ asset('storage/' . $related->image) }}" alt="{{ $related->name }}">
                                 </a>
+
+                                @if($related->original_price > $related->offer_price)
+                                    <span class="product-tag">
+                                        {{ round((($related->original_price - $related->offer_price) / $related->original_price) * 100) }}% off
+                                    </span>
+                                @endif
                             </div>
 
                             <div class="product-grid-content">
@@ -289,9 +295,17 @@
                                 </h3>
 
                                 <span class="box-price">
-                                    <del>₹ {{ number_format($related->original_price, 2) }}</del>
-                                    ₹ {{ number_format($related->offer_price, 2) }}
+                                    @if($related->original_price > $related->offer_price)
+                                        <del>₹{{ number_format($related->original_price, 2) }}</del>
+                                    @endif
+                                    ₹{{ number_format($related->offer_price, 2) }}
                                 </span>
+
+                                <a href="javascript:void(0)"
+                                   class="th-btn2 btn-fw addToCartBtn"
+                                   data-id="{{ $related->id }}">
+                                    Add To Cart
+                                </a>
                             </div>
 
                         </div>
