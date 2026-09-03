@@ -143,7 +143,7 @@
                             <li>
                                 Availability:
                                 <span>
-                                    {{ $product->stock > 0 ? $product->stock.' in stock' : 'Out of stock' }}
+                                    {{ ($product->stock ?? 0) > 0 ? 'In Stock' : 'Out of stock' }}
                                 </span>
                             </li>
                         </ul>

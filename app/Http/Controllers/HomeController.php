@@ -25,14 +25,15 @@ class HomeController extends Controller
 
     $data['offers'] = Offer::with('category')->where('is_active', true)->get();
 
-    $data['popular'] = Product::latest()->take(6)->get();
+    $data['popular'] = Product::where('is_active', 1)->latest()->take(6)->get();
 
-    $data['featured'] = Product::where('featured',true)->take(6)->get();
+    $data['featured'] = Product::where('is_active', 1)->where('order', '>', 0)->take(6)->get();
 
-    $data['new_arrivals'] = Product::latest()->take(6)->get();
+    $data['new_arrivals'] = Product::where('is_active', 1)->latest()->take(6)->get();
 
     $data['featuredCategory'] = Category::with(['products' => function ($query) {
-        $query->latest()
+        $query->where('is_active', 1)
+              ->latest()
               ->take(12);
     }])->where('is_featured', true)->first();
 

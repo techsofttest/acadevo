@@ -93,7 +93,7 @@ class ProductController extends Controller
             ->where('parent_id', $category->id)
             ->firstOrFail();
 
-        $products = Product::where('category_id', $subcategory->id)->get();
+        $products = Product::where('is_active', 1)->where('category_id', $subcategory->id)->get();
 
         $title = $subcategory->name;
 
@@ -107,7 +107,7 @@ class ProductController extends Controller
         // Include parent ID also
         $allCategoryIds = array_merge([$category->id], $subcategoryIds);
 
-        $products = Product::whereIn('category_id', $allCategoryIds)->get();
+        $products = Product::where('is_active', 1)->whereIn('category_id', $allCategoryIds)->get();
 
         $title = $category->name;
     }
@@ -131,7 +131,8 @@ class ProductController extends Controller
       ->where('is_active', true)
       ->firstOrFail();
 
-    $relatedProducts = Product::where('category_id', $product->category_id)
+    $relatedProducts = Product::where('is_active', 1)
+        ->where('category_id', $product->category_id)
         ->where('id', '!=', $product->id)
         ->limit(8)
         ->get();
@@ -178,6 +179,7 @@ class ProductController extends Controller
     {
     
     $products = Product::query()
+        ->where('is_active', 1)
 
         ->when($request->search, function ($q) use ($request) {
             $q->where('name', 'like', '%' . $request->search . '%');
