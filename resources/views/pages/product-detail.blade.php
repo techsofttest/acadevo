@@ -273,7 +273,7 @@
 
                 @foreach($relatedProducts as $related)
                     <div class="swiper-slide">
-                        <div class="product-grid style2 style8">
+                        <div class="product-grid col-12 col-sm-6 col-md-4 col-lg-3 style2 style8">
 
                             <div class="box-img">
                                 <a href="{{ route('product.show', $related->slug) }}">
