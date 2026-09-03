@@ -322,6 +322,29 @@
 
 @section('footer_extras')
 
-<script src="{{asset('js/mains.js')}}"></script>
+<script>
+$(document).ready(function(){
+    var proQty = $('.pro-qty');
+    if (proQty.length && !proQty.find('.qtybtn').length) {
+        proQty.prepend('<span class="dec qtybtn">-</span>');
+        proQty.append('<span class="inc qtybtn">+</span>');
+        proQty.on('click', '.qtybtn', function () {
+            var $button = $(this);
+            var oldValue = parseFloat($button.parent().find('input').val()) || 1;
+            var newVal = 1;
+            if ($button.hasClass('inc')) {
+                newVal = oldValue + 1;
+            } else {
+                if (oldValue > 1) {
+                    newVal = oldValue - 1;
+                } else {
+                    newVal = 1;
+                }
+            }
+            $button.parent().find('input').val(newVal);
+        });
+    }
+});
+</script>
 
 @endsection
