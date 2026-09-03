@@ -276,14 +276,14 @@
                         <div class="product-grid style2 style8">
 
                             <div class="box-img">
-                                <a href="{{ route('products.show', $related->slug) }}">
+                                <a href="{{ route('product.show', $related->slug) }}">
                                     <img src="{{ asset('storage/products/'.$related->image) }}">
                                 </a>
                             </div>
 
                             <div class="product-grid-content">
                                 <h3 class="box-title">
-                                    <a href="{{ route('products.show', $related->slug) }}">
+                                    <a href="{{ route('product.show', $related->slug) }}">
                                         {{ $related->name }}
                                     </a>
                                 </h3>
