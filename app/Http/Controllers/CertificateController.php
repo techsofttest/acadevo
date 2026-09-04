@@ -45,5 +45,16 @@ class CertificateController extends Controller
 
     }
 
+    public function generate(Student $student)
+    {
+        if (!auth()->check()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $student->load(['institute', 'studentCourses.course']);
+        $pdf = Pdf::loadView('pages.certificate-pdf', compact('student'));
+        return $pdf->stream('certificate-'.$student->id.'.pdf');
+    }
+
 
 }

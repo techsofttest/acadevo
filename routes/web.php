@@ -52,8 +52,8 @@ Route::get('/live-search', [ProductController::class, 'liveSearch'])
 Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials');
 
 Route::get('/certificate', [CertificateController::class, 'index'])->name('certificate');
-
 Route::post('/certificate/verify', [CertificateController::class, 'verify'])->name('certificate.verify');
+Route::get('/certificate/generate/{student}', [CertificateController::class, 'generate'])->name('certificate.generate');
 
 Route::get('/privacy-policy', [ContentController::class, 'privacy']);
 Route::get('/terms-and-conditions', [ContentController::class, 'terms']);

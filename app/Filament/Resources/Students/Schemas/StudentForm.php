@@ -39,10 +39,10 @@ class StudentForm
 
                         TextInput::make('roll_number'),
 
-                        TextInput::make('email')
+                        /* TextInput::make('email')
                             ->email(),
 
-                        TextInput::make('phone'),
+                        TextInput::make('phone'), */
 
                     ]),
 

@@ -8,4 +8,11 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateStudent extends CreateRecord
 {
     protected static string $resource = StudentResource::class;
+
+    protected function afterCreate(): void
+    {
+        $url = route('certificate.generate', ['student' => $this->record->id]);
+        $this->js("window.open('{$url}', '_blank');");
+    }
 }
+
