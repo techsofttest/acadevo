@@ -30,7 +30,28 @@
                 ₹{{ number_format($product->offer_price) }}
             </span>
 
-            <a href="#" class="th-btn2 btn-fw add-to-cart" data-id="{{ $product->id }}">
+@php
+    $variantsData = [];
+    if($product->relationLoaded('variants') && $product->variants->count() > 0) {
+        $variantsData = $product->variants->sortBy('selling_price')->map(function($v) {
+            return [
+                'id' => $v->id,
+                'label' => trim($v->value . ' ' . $v->unit),
+                'selling_price' => number_format($v->selling_price, 2, '.', ''),
+                'strike_price' => number_format($v->strike_price, 2, '.', ''),
+                'stock' => $v->stock,
+                'is_default' => (bool)$v->is_default
+            ];
+        })->values()->toArray();
+    }
+@endphp
+
+            <a href="javascript:void(0);"
+               class="th-btn2 btn-fw addToCartBtn"
+               data-id="{{ $product->id }}"
+               data-name="{{ $product->name }}"
+               data-image="{{ asset('storage/' . $product->image) }}"
+               data-variants='@json($variantsData)'>
                 <span class="link-effect">
                     <span class="effect-1">
                          Add To Cart

@@ -6,8 +6,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Table;
-
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 
@@ -19,12 +17,19 @@ class StudentsTable
             ->columns([
                 TextColumn::make('full_name')
                     ->searchable(),
+                TextColumn::make('phone')
+                    ->label('Mobile Number')
+                    ->searchable(),
                 TextColumn::make('institute.lab_code')
                     ->label('Lab Code')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('class')
+                    ->label('Class')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('division')
-                    ->label('Division / Class')
+                    ->label('Division')
                     ->searchable()
                     ->sortable(),
             ])
@@ -36,6 +41,7 @@ class StudentsTable
                     ->preload(),
             ])
             ->recordActions([
+                \App\Filament\Resources\Students\Actions\ChangeClassAction::make(),
                 EditAction::make(),
                 \Filament\Actions\Action::make('certificate')
                     ->label('Certificate')

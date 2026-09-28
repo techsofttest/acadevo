@@ -10,7 +10,7 @@
 <a href="javascript:void(0);" data-key="{{ $item['key'] }}" class="remove remove_from_cart_button removeFromCartBtn">
 <i class="far fa-times"></i>
 </a> 
-<a href="product-detail.html"><img src="{{ asset('storage/' . $item['image']) }}" alt="Cart Image">{{ $item['name'] }}</a> 
+<a href="{{ url('products/' . ($item['slug'] ?? '')) }}"><img src="{{ asset('storage/' . $item['image']) }}" alt="Cart Image">{{ $item['name'] }} @if(!empty($item['variant_name'])) <span class="d-block text-muted" style="font-size: 11px;">({{ $item['variant_name'] }})</span> @endif</a> 
 <span class="quantity">{{ $item['qty'] }} x <span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol"> </span>₹ {{ number_format($item['price'],2) }}</span>
 </span>
 </li>

@@ -58,18 +58,20 @@
         <tr class="cart_item">
             <td data-title="Order Id">
                 <img width="80" height="80"
-                     src="{{ asset('storage/'.$item->product->image) }}"
-                     alt="">
+                     src="{{ !empty($item->product?->image) ? asset('storage/'.$item->product->image) : asset('img/products/p1-1.jpg') }}"
+                     alt="{{ $item->product?->name ?? $item->title }}">
             </td>
 
             <td class="product-td-full">
                 <a class="cart-productname"
-                   href="{{ url('products/'.$item->product->slug) }}">
-                    {{ $item->title }}
+                   href="{{ $item->product?->slug ? url('products/'.$item->product->slug) : '#' }}">
+                    {{ $item->product?->name ?? $item->title }}
                 </a>
 
-                @if($item->variant)
-                    
+                @if($item->variant_label)
+                    <p class="text-muted small mb-1" style="font-size: 13px; color: #6c757d;">
+                        <strong>Variant:</strong> {{ $item->variant_label }}
+                    </p>
                 @endif
 
                 <p class="color-carttablee">
@@ -84,10 +86,12 @@
             </td>
 
             <td>
-                <a href="{{ url('products/'.$item->product->slug) }}"
-                   class="reorder-swc">
-                    Re Order
-                </a>
+                @if($item->product?->slug)
+                    <a href="{{ url('products/'.$item->product->slug) }}"
+                       class="reorder-swc">
+                        Re Order
+                    </a>
+                @endif
             </td>
         </tr>
         @endforeach
@@ -120,63 +124,11 @@
 </table>
 
 @empty
-    <p class="text-center">You have no orders yet.</p>
+    <div class="text-center py-5">
+        <p class="text-muted">You have no orders yet.</p>
+        <a href="{{ url('products') }}" class="btn btn-primary mt-2" style="display: inline-block; padding: 8px 20px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">Start Shopping</a>
+    </div>
 @endforelse
-	  
-	  
-	  
-	    <table class="cart_table mb-30">
-        <thead class="dash-tr">
-          <tr>
-            <th class="cart-col-image">Oct 5 2025</th>
-            <th class="cart-col-productname">#16079</th>
-			 <th class="cart-col-productname"> <span class="oo-sorder">Un Paid</span></th>
-            
-         		 <th class="cart-col-productname"> <span class="oo-sstatus-fail">Failed</span></th>
-            
- 
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="cart_item">
-            <td data-title="Order Id"><img width="80" height="80" src="assets/img/products/p1-1.jpg" alt=""></td>
-         <td data-title="Product Name" class="product-td-full"><a class="cart-productname" href="product-detail.html">Goldplated Rings</a>
-			
-	 
-		<p class="color-carttablee"> Color: White</p>
-				<p class="color-carttablee">Quantity: 1</p>
-			</td>
-		 
-           <td data-title="Product Name" class="product-td-full"> 
-			
-			<p class="price-carttablee">€ 1,875.00 </p>
-	 
-			</td>
-           
-            <td data-title="Action"><div class=" "><a href="product-detail.html"   class="reorder-swc">Re Order</a></div></td>
-          </tr>
-		  
-		  <tr class="cart_item final-tt">
-        
-         <td data-title="Product Name" class="product-td-full" colspan="2"> 
-			
-	 
-		<p class="color-carttablee">1 Items</p>
-				 
-			</td>
-		 
-           <td data-title="Product Name" class="product-td-full"> 
-			
-			<p class="price-carttablee">€ 1,875.00 </p>
-	 
-			</td>
-           
-            <td data-title="Action"><div class="Order-buttons"><a href="order-details.html" title="View Order" class="oview">View Order</a></div></td>
-          </tr>
-		  </tbody>
-      </table>
-	  
-	  <!-- ----------->
     </div>
           </div>
           
@@ -189,11 +141,5 @@
     </div>
   </div>
 </section>
-
-
-
-
- 
-
 
 @endsection

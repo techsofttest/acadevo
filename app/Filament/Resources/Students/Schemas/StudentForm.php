@@ -3,14 +3,10 @@
 namespace App\Filament\Resources\Students\Schemas;
 
 use Filament\Schemas\Schema;
-
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
-
 use Filament\Schemas\Components\Section;
-
 
 class StudentForm
 {
@@ -19,14 +15,10 @@ class StudentForm
         return $schema
             ->columns(1)
             ->components([
-                
 
-                 Section::make('Student Details')
+                // 1. Common Academic & Institute Details
+                Section::make('Institute & Academic Info')
                     ->schema([
-
-                        TextInput::make('full_name')
-                            ->required()
-                            ->maxLength(255),
 
                         Select::make('institute_id')
                             ->relationship('institute', 'name')
@@ -34,18 +26,88 @@ class StudentForm
                             ->preload()
                             ->required(),
 
+                        TextInput::make('class')
+                            ->label('Class')
+                            ->placeholder('e.g. 10th / MCA / B.Tech')
+                            ->disabled(fn (string $operation): bool => $operation === 'edit')
+                            ->helperText(fn (string $operation): ?string => $operation === 'edit' ? 'Use the "Change Class" action to update class & division.' : null),
+
                         TextInput::make('division')
-                            ->label('Division / Class'),
+                            ->label('Division')
+                            ->placeholder('e.g. A / B / Morning')
+                            ->disabled(fn (string $operation): bool => $operation === 'edit'),
 
-                        TextInput::make('roll_number'),
+                    ])->columns(3),
 
-                        /* TextInput::make('email')
-                            ->email(),
+                // 2. Student List (Repeater for creation: single or multiple students)
+                Section::make('Student Details')
+                    ->description('Add one or more students below. Each entry will create an individual student record.')
+                    ->visible(fn (string $operation): bool => $operation === 'create')
+                    ->schema([
 
-                        TextInput::make('phone'), */
+                        Repeater::make('students_list')
+                            ->label('Students')
+                            ->schema([
+
+                                TextInput::make('full_name')
+                                    ->label('Full Name')
+                                    ->required()
+                                    ->maxLength(255),
+
+                                TextInput::make('roll_number')
+                                    ->label('Roll Number')
+                                    ->maxLength(100),
+
+                                TextInput::make('phone')
+                                    ->label('Mobile Number')
+                                    ->tel()
+                                    ->required()
+                                    ->maxLength(20),
+
+                                TextInput::make('email')
+                                    ->label('Email')
+                                    ->email()
+                                    ->maxLength(255),
+
+                            ])
+                            ->columns(4)
+                            ->defaultItems(1)
+                            ->minItems(1)
+                            ->addActionLabel('+ Add Another Student')
+                            ->reorderable(false)
+                            ->collapsible()
+                            ->cloneable(),
 
                     ]),
 
+                // 2b. Individual Student Details (Shown when editing an existing record)
+                Section::make('Student Details')
+                    ->visible(fn (string $operation): bool => $operation === 'edit')
+                    ->schema([
+
+                        TextInput::make('full_name')
+                            ->label('Full Name')
+                            ->required()
+                            ->maxLength(255),
+
+                        TextInput::make('roll_number')
+                            ->label('Roll Number')
+                            ->maxLength(100),
+
+                        TextInput::make('phone')
+                            ->label('Mobile Number')
+                            ->tel()
+                            ->required()
+                            ->maxLength(20),
+
+                        TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->maxLength(255),
+
+                    ])->columns(2),
+
+                // 3. Assigned Courses (Applied to all created students or edited student)
                 Section::make('Courses')
                     ->schema([
 
@@ -59,12 +121,6 @@ class StudentForm
                                     ->preload()
                                     ->required(),
 
-                                DatePicker::make('start_date')
-                                    ->required(),
-
-                                DatePicker::make('end_date'),
-
-
                             ])
                             ->addActionLabel('Add Course')
                             ->collapsible()
@@ -72,7 +128,7 @@ class StudentForm
 
                     ])
 
-
             ]);
     }
 }
+

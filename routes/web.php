@@ -53,7 +53,23 @@ Route::get('/testimonials', [TestimonialController::class, 'index'])->name('test
 
 Route::get('/certificate', [CertificateController::class, 'index'])->name('certificate');
 Route::post('/certificate/verify', [CertificateController::class, 'verify'])->name('certificate.verify');
+Route::post('/certificate/verify-otp', [CertificateController::class, 'verifyOtp'])->name('certificate.verifyOtp');
 Route::get('/certificate/generate/{student}', [CertificateController::class, 'generate'])->name('certificate.generate');
+Route::get('/admin/students/download-template', function () {
+    $path = base_path('FILES/Student Import.xlsx');
+    if (!file_exists($path)) {
+        abort(404, 'Template file not found.');
+    }
+    return response()->download($path, 'Student_Import_Template.xlsx');
+})->name('admin.students.download-template');
+
+Route::get('/admin/products/download-template', function () {
+    $path = base_path('FILES/Product Import.xlsx');
+    if (!file_exists($path)) {
+        abort(404, 'Template file not found.');
+    }
+    return response()->download($path, 'Product_Import_Template.xlsx');
+})->name('admin.products.download-template');
 
 Route::get('/privacy-policy', [ContentController::class, 'privacy']);
 Route::get('/terms-and-conditions', [ContentController::class, 'terms']);
@@ -96,6 +112,8 @@ Route::post('/register', [CustomerRegisterController::class, 'register'])->name(
 
 
 Route::post('/customer/login', [CustomerLoginController::class, 'login'])->name('customer.login');
+Route::post('/customer/send-otp', [CustomerLoginController::class, 'sendMobileOtp'])->name('customer.sendOtp');
+Route::post('/customer/verify-otp', [CustomerLoginController::class, 'verifyMobileOtp'])->name('customer.verifyOtp');
 
 // Logout
 Route::post('/customer/logout', [CustomerLoginController::class, 'logout'])->name('customer.logout');
@@ -184,7 +202,11 @@ Route::get('/stripe/cancel/{order}', [CheckoutController::class, 'stripeCancel']
 
 
 Route::get('/orders/{order}/print', function (Order $order) {
-    return view('orders.print', compact('order'));
+    $order->load(['items.product', 'customer']);
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('orders.pdf', compact('order'))
+        ->setPaper('a4', 'portrait');
+
+    return $pdf->download('invoice-' . $order->order_number . '.pdf');
 })->name('orders.print');
 
 use Illuminate\Support\Facades\Artisan;

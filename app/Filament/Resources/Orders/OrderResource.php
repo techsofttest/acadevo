@@ -9,7 +9,7 @@ use App\Filament\Resources\Orders\Pages\EditOrder;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Schemas\OrderForm;
 use App\Filament\Resources\Orders\Tables\OrdersTable;
-use App\Models\Order;
+use App\Models\Order;   
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -93,9 +93,10 @@ class OrderResource extends Resource
         Section::make('Items')->schema([
             Repeater::make('items')
                 ->relationship('items')
-                ->columns(6)
+                ->columns(7)
                 ->schema([
                     TextInput::make('title')->disabled(),
+                    TextInput::make('variant_label')->label('Variant')->disabled(),
                     TextInput::make('quantity')->disabled(),
                     TextInput::make('price')->disabled(),
                     TextInput::make('subtotal')->disabled(),

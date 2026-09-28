@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Carbon\Carbon;
 use App\Models\Coupon;
 
@@ -14,20 +15,39 @@ class CartController extends Controller
 
     public function index()
     {
+        $cart = session()->get('cart', []);
+        $updated = false;
 
-    $cart = session()->get('cart', []);
+        foreach ($cart as $key => $item) {
+            $availableStock = 0;
+            if (!empty($item['variant_id'])) {
+                $variant = ProductVariant::where('product_id', $item['product_id'])->find($item['variant_id']);
+                $availableStock = $variant ? (int)$variant->stock : 0;
+            } else {
+                $product = Product::find($item['product_id']);
+                $availableStock = $product ? (int)$product->stock : 0;
+            }
 
-    $subtotal = collect($cart)->sum(fn ($item) => $item['price'] * $item['qty']);
-    $shipping = 0; // you can make dynamic later
-    $total = $subtotal + $shipping;
+            if ($availableStock <= 0) {
+                unset($cart[$key]);
+                $updated = true;
+            } elseif ($item['qty'] > $availableStock) {
+                $cart[$key]['qty'] = $availableStock;
+                $updated = true;
+            }
+        }
 
-    return view('pages.cart', compact('cart', 'subtotal', 'shipping', 'total'));
+        if ($updated) {
+            session()->put('cart', $cart);
+            session()->flash('warning', 'Some quantities in your cart were adjusted based on available stock.');
+        }
 
+        $subtotal = collect($cart)->sum(fn ($item) => $item['price'] * $item['qty']);
+        $shipping = 0;
+        $total = $subtotal + $shipping;
+
+        return view('pages.cart', compact('cart', 'subtotal', 'shipping', 'total'));
     }
-
-
-
-
 
     /**
      * Add to cart
@@ -36,26 +56,65 @@ class CartController extends Controller
     {
         $request->validate([
             'product_id' => 'required|integer',
+            'variant_id' => 'nullable|integer',
             'qty'        => 'nullable|integer|min:1',
         ]);
 
-        $qty = $request->qty ?? 1;
+        $qty = (int) ($request->qty ?? 1);
+        if ($qty < 1) {
+            $qty = 1;
+        }
 
         $product = Product::findOrFail($request->product_id);
 
-        $cart = session()->get('cart', []);
+        $variant = null;
+        if ($request->filled('variant_id')) {
+            $variant = ProductVariant::where('product_id', $product->id)->find($request->variant_id);
+        }
 
-        // Prevent ID collision between tables
-        $key = 'product_' . $product->id;
+        if (!$variant && $product->variants()->exists()) {
+            $variant = $product->variants()->where('stock', '>', 0)->where('is_default', true)->first() 
+                ?? $product->variants()->where('stock', '>', 0)->first() 
+                ?? $product->variants()->where('is_default', true)->first() 
+                ?? $product->variants()->first();
+        }
+
+        $availableStock = $variant ? (int)$variant->stock : (int)$product->stock;
+
+        if ($availableStock <= 0) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Sorry, this item is currently out of stock.'
+            ], 422);
+        }
+
+        $cart = session()->get('cart', []);
+        $key = $variant ? 'product_' . $product->id . '_v_' . $variant->id : 'product_' . $product->id;
+
+        $currentCartQty = isset($cart[$key]) ? (int)$cart[$key]['qty'] : 0;
+        $totalRequestedQty = $currentCartQty + $qty;
+
+        if ($totalRequestedQty > $availableStock) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Maximum stocks selected'
+            ], 422);
+        }
+
+        $price = $variant ? $variant->selling_price : ($product->offer_price ?? $product->original_price);
+        $variantName = $variant ? trim(($variant->value ?? '') . ' ' . ($variant->unit ?? '')) : null;
 
         if (isset($cart[$key])) {
             $cart[$key]['qty'] += $qty;
         } else {
             $cart[$key] = [
-                'key'   =>        $key,
+                'key'          => $key,
                 'product_id'   => $product->id,
+                'variant_id'   => $variant?->id,
+                'variant_name' => $variantName,
                 'name'         => $product->name,
-                'price'        => $product->offer_price ?? $product->original_price,
+                'slug'         => $product->slug,
+                'price'        => $price,
                 'qty'          => $qty,
                 'image'        => $product->image,
             ];
@@ -97,7 +156,25 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (isset($cart[$request->key])) {
-            $cart[$request->key]['qty'] = $request->qty;
+            $item = $cart[$request->key];
+            $availableStock = 0;
+
+            if (!empty($item['variant_id'])) {
+                $variant = ProductVariant::where('product_id', $item['product_id'])->find($item['variant_id']);
+                $availableStock = $variant ? (int)$variant->stock : 0;
+            } else {
+                $product = Product::find($item['product_id']);
+                $availableStock = $product ? (int)$product->stock : 0;
+            }
+
+            if ((int)$request->qty > $availableStock) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Maximum stocks selected'
+                ], 422);
+            }
+
+            $cart[$request->key]['qty'] = (int)$request->qty;
             session()->put('cart', $cart);
         }
 
@@ -201,31 +278,52 @@ class CartController extends Controller
 
 
 
-    public function buyNow($id)
-{
-    $product = Product::findOrFail($id);
+    public function buyNow(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
 
-    // Clear previous cart (optional — recommended for direct buy)
-    session()->forget('cart');
+        $variant = null;
+        if ($request->filled('variant_id')) {
+            $variant = ProductVariant::where('product_id', $product->id)->find($request->variant_id);
+        }
 
-     $key = 'product_' . $product->id;
+        if (!$variant && $product->variants()->exists()) {
+            $variant = $product->variants()->where('stock', '>', 0)->where('is_default', true)->first() 
+                ?? $product->variants()->where('stock', '>', 0)->first() 
+                ?? $product->variants()->where('is_default', true)->first() 
+                ?? $product->variants()->first();
+        }
 
-    // Add only this product
-    $cart = [
-        $product->id => [
-            'key'   =>  $key,
-            'product_id' => $product->id,
-            "name" => $product->name,
-            "qty" => 1,
-            "price" => $product->offer_price ?? $product->original_price,
-            "image" => $product->image
-        ]
-    ];
+        $availableStock = $variant ? (int)$variant->stock : (int)$product->stock;
 
-    session()->put('cart', $cart);
+        if ($availableStock < 1) {
+            return redirect()->back()->with('error', 'Sorry, this item is currently out of stock.');
+        }
 
-    // Redirect directly to checkout
-    return redirect()->route('checkout.view');
+        $price = $variant ? $variant->selling_price : ($product->offer_price ?? $product->original_price);
+        $variantName = $variant ? trim(($variant->value ?? '') . ' ' . ($variant->unit ?? '')) : null;
+
+        session()->forget('cart');
+
+        $key = $variant ? 'product_' . $product->id . '_v_' . $variant->id : 'product_' . $product->id;
+
+        $cart = [
+            $key => [
+                'key'          => $key,
+                'product_id'   => $product->id,
+                'variant_id'   => $variant?->id,
+                'variant_name' => $variantName,
+                'name'         => $product->name,
+                'slug'         => $product->slug,
+                'qty'          => 1,
+                'price'        => $price,
+                'image'        => $product->image
+            ]
+        ];
+
+        session()->put('cart', $cart);
+
+        return redirect()->route('checkout.view');
     }
 
 

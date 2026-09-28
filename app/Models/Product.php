@@ -22,9 +22,12 @@ class Product extends Model
 
     public function category()
     {
+        return $this->belongsTo(Category::class);
+    }
 
-    return $this->belongsTo(Category::class);
-
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('selling_price', 'asc');
     }
    
 
@@ -35,6 +38,32 @@ class Product extends Model
 
         // Return the first image or null if empty
         return count($images) > 0 ? $images[0] : null;
+    }
+
+    public function defaultVariant()
+    {
+        return $this->hasOne(ProductVariant::class)->ofMany([
+            'is_default' => 'max',
+            'id' => 'min',
+        ]);
+    }
+
+    public function getOfferPriceAttribute()
+    {
+        if ($this->relationLoaded('defaultVariant') && $this->defaultVariant) {
+            return $this->defaultVariant->selling_price;
+        }
+        $default = $this->variants()->where('is_default', true)->first() ?? $this->variants()->first();
+        return $default ? $default->selling_price : 0;
+    }
+
+    public function getOriginalPriceAttribute()
+    {
+        if ($this->relationLoaded('defaultVariant') && $this->defaultVariant) {
+            return $this->defaultVariant->strike_price;
+        }
+        $default = $this->variants()->where('is_default', true)->first() ?? $this->variants()->first();
+        return $default ? $default->strike_price : 0;
     }
 
     /* =====================

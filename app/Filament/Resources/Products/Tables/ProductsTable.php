@@ -20,10 +20,15 @@ class ProductsTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+                TextColumn::make('sku')
+                    ->label('SKU')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('—'),
                 TextColumn::make('category.name')
-                ->label('Category')
-                ->sortable()
-                ->searchable(),
+                    ->label('Category')
+                    ->sortable()
+                    ->searchable(),
                 ImageColumn::make('image'),
                 ToggleColumn::make('is_active')
                 ->label('Active')

@@ -50,7 +50,7 @@
                     <tr class="cart_item" data-key="{{ $item['key'] }}">
 
                         <td>
-                            <a class="cart-productimage" href="#">
+                            <a class="cart-productimage" href="{{ url('products/'.($item['slug'] ?? '')) }}">
                                 <img width="120" height="120"
                                     src="{{ asset('storage/'.$item['image']) }}"
                                     alt="{{ $item['name'] }}">
@@ -58,9 +58,13 @@
                         </td>
 
                         <td class="product-td-full">
-                            <a class="cart-productname" href="#">
+                            <a class="cart-productname" href="{{ url('products/'.($item['slug'] ?? '')) }}">
                                 {{ $item['name'] }}
                             </a>
+
+                            @if(!empty($item['variant_name']))
+                                <div class="text-muted small mt-1">Variant: {{ $item['variant_name'] }}</div>
+                            @endif
 
                             <p class="price-carttablee">
                                 ₹{{ number_format($item['price'],2) }}
@@ -68,11 +72,23 @@
                         </td>
 
                         <td>
+                            @php
+                                $itemStock = 999;
+                                if (!empty($item['variant_id'])) {
+                                    $v = \App\Models\ProductVariant::where('product_id', $item['product_id'])->find($item['variant_id']);
+                                    $itemStock = $v ? $v->stock : 0;
+                                } else {
+                                    $p = \App\Models\Product::find($item['product_id']);
+                                    $itemStock = $p ? $p->stock : 0;
+                                }
+                            @endphp
                             <div class="quantitynew">
                                 <div class="pro-qty">
                                     <input type="number"
                                         class="cartQtyInput"
                                         data-key="{{ $item['key'] }}"
+                                        data-stock="{{ $itemStock }}"
+                                        max="{{ $itemStock }}"
                                         value="{{ $item['qty'] }}"
                                         min="1" readonly>
                                 </div>
@@ -238,7 +254,16 @@ $(document).ready(function(){
         let row = $(this).closest('tr');
         let input = row.find('.cartQtyInput');
         let key = input.data('key');
-        let qty = input.val();
+        let maxStock = parseInt(input.data('stock')) || parseInt(input.attr('max')) || 9999;
+        let qty = parseInt(input.val()) || 1;
+
+        if (qty > maxStock) {
+            qty = maxStock;
+            input.val(qty);
+            if (typeof alertify !== 'undefined') {
+                alertify.error('Maximum stocks selected');
+            }
+        }
 
         if (key && qty) {
             $.post("{{ route('cart.update') }}", {
@@ -246,7 +271,16 @@ $(document).ready(function(){
                 qty: qty,
                 _token: "{{ csrf_token() }}"
             }, function(response){
-                location.reload(); // simple version
+                location.reload();
+            }).fail(function(xhr){
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    if (typeof alertify !== 'undefined') {
+                        alertify.error(xhr.responseJSON.message);
+                    } else {
+                        alert(xhr.responseJSON.message);
+                    }
+                }
+                setTimeout(function(){ location.reload(); }, 1500);
             });
         }
 

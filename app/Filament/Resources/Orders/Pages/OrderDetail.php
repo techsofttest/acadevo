@@ -23,11 +23,15 @@ class OrderDetail extends ViewRecord
         return "Order Details";
     }
 
-    /*
-    public function mount($record): void
+    protected function getHeaderActions(): array
     {
-        $this->order = Order::with(['items', 'user', 'coupon'])->findOrFail($record);
+        return [
+            \Filament\Actions\Action::make('print')
+                ->label('Print Invoice')
+                ->icon('heroicon-o-printer')
+                ->color('gray')
+                ->url(fn () => route('orders.print', $this->record))
+                ->openUrlInNewTab(),
+        ];
     }
-    */
-
 }

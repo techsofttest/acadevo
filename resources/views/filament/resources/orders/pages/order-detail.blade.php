@@ -507,12 +507,21 @@
 
                             <div class="order-product-details">
                                 <div class="order-product-name">
-                                    {{ $item->title }}
+                                    {{ $item->product?->name ?? $item->title }}
                                 </div>
 
-                                @if ($item->variant)
+                                @if ($item->variant_label)
                                     <div class="order-product-variant">
-                                        {{ $item->variant->name }}
+                                        <span style="font-weight: 500;">Variant:</span> {{ $item->variant_label }}
+                                    </div>
+                                @endif
+
+                                @php
+                                    $itemSku = $item->sku ?? $item->variant?->sku ?? $item->product?->sku;
+                                @endphp
+                                @if ($itemSku)
+                                    <div class="order-product-sku">
+                                        <span>SKU:</span> {{ $itemSku }}
                                     </div>
                                 @endif
                             </div>

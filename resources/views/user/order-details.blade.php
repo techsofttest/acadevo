@@ -29,7 +29,12 @@
 
 
  <div class="checkoutlast">
-    <h5>Order Details</h5>
+    <div class="d-flex justify-content-between align-items-center mb-3" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h5 style="margin: 0;">Order #{{ $order->order_number }}</h5>
+        <a href="{{ route('orders.print', $order) }}" class="btn btn-sm" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #000; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none;">
+            <i class="fas fa-file-pdf"></i> Download Invoice
+        </a>
+    </div>
 
     <table class="cart_table mb-20">
         <tbody class="m-tt-check">
@@ -37,21 +42,25 @@
         @foreach ($order->items as $item)
             <tr class="cart_item">
                 <td class="product-td-full">
-                    <a class="cart-productimage" href="{{ url('products') }}/{{$item->product->slug}}">
+                    <a class="cart-productimage" href="{{ $item->product?->slug ? url('products/'.$item->product->slug) : '#' }}">
                         <img width="71" height="71"
-                             src="{{ asset('storage') }}/{{$item->product->image}}"
-                             alt="">
+                             src="{{ !empty($item->product?->image) ? asset('storage/'.$item->product->image) : asset('img/products/p1-1.jpg') }}"
+                             alt="{{ $item->product?->name ?? $item->title }}">
                         <div class="checoo-count">{{ $item->quantity }}</div>
                     </a>
                 </td>
 
                 <td class="product-td-full">
                     <a class="cart-productname checout"
-                       href="{{ url('products') }}/{{$item->product->slug}}">
-                        {{ $item->product->name }}
+                       href="{{ $item->product?->slug ? url('products/'.$item->product->slug) : '#' }}">
+                        {{ $item->product?->name ?? $item->title }}
                     </a>
 
-                   
+                    @if($item->variant_label)
+                        <div class="text-muted small mt-1" style="font-size: 13px; color: #6c757d;">
+                            <strong>Variant:</strong> {{ $item->variant_label }}
+                        </div>
+                    @endif
                 </td>
 
                 <td class="product-td-full cat-min-tdr">
@@ -67,23 +76,28 @@
         <tfoot class="checkout-ordertable mob-chec-table">
             <tr>
                 <th>Subtotal</th>
-                <td colspan="4">₹ {{ number_format($order->subtotal, 2) }}</td>
+                <td colspan="4">₹ {{ number_format($order->subtotal ?? 0, 2) }}</td>
             </tr>
+
+            @php
+                $shipping = $order->shipping_total ?? $order->shipping_amount ?? 0;
+                $discount = $order->discount_total ?? $order->coupon_discount ?? $order->discount_amount ?? 0;
+            @endphp
 
             <tr>
                 <th>Shipping</th>
                 <td colspan="4">
-                    {{ $order->shipping_amount > 0 
-                        ? '₹ ' . number_format($order->shipping_amount, 2) 
+                    {{ $shipping > 0 
+                        ? '₹ ' . number_format($shipping, 2) 
                         : 'Free shipping' }}
                 </td>
             </tr>
 
-            @if ($order->discount_amount > 0)
+            @if ($discount > 0)
             <tr>
                 <th>Discount</th>
                 <td colspan="4">
-                    € {{ number_format($order->discount_amount, 2) }}
+                    - ₹ {{ number_format($discount, 2) }}
                     @if ($order->coupon_code)
                         ({{ $order->coupon_code }})
                     @endif

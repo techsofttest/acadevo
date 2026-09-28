@@ -44,11 +44,12 @@ class ViewOrder extends ViewRecord
                     ->relationship('items')
                     ->schema([
                         Forms\Components\TextInput::make('title')->disabled(),
+                        Forms\Components\TextInput::make('variant_label')->label('Variant')->disabled(),
                         Forms\Components\TextInput::make('quantity')->disabled(),
                         Forms\Components\TextInput::make('price')->disabled(),
                         Forms\Components\TextInput::make('subtotal')->disabled(),
                     ])
-                    ->columns(4)
+                    ->columns(5)
                     ->disableItemCreation()
                     ->disableItemDeletion()
                     ->disableItemMovement(),

@@ -11,6 +11,7 @@ use Stripe\Checkout\Session as StripeSession;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Coupon;
 
 class CheckoutController extends Controller
@@ -20,7 +21,37 @@ class CheckoutController extends Controller
     public function index()
     {
 
-        $data['cart'] = session('cart', []);
+        $cart = session('cart', []);
+        $updated = false;
+
+        foreach ($cart as $key => $item) {
+            $availableStock = 0;
+            if (!empty($item['variant_id'])) {
+                $variant = ProductVariant::where('product_id', $item['product_id'])->find($item['variant_id']);
+                $availableStock = $variant ? (int)$variant->stock : 0;
+            } else {
+                $product = Product::find($item['product_id']);
+                $availableStock = $product ? (int)$product->stock : 0;
+            }
+
+            if ($availableStock <= 0) {
+                unset($cart[$key]);
+                $updated = true;
+            } elseif ($item['qty'] > $availableStock) {
+                $cart[$key]['qty'] = $availableStock;
+                $updated = true;
+            }
+        }
+
+        if ($updated) {
+            session()->put('cart', $cart);
+            if (empty($cart)) {
+                return redirect()->route('cart.index')->with('error', 'Item(s) in your cart are no longer in stock.');
+            }
+            session()->flash('warning', 'Cart quantities were updated based on real-time stock availability.');
+        }
+
+        $data['cart'] = $cart;
         $data['subtotal'] = collect($data['cart'])->sum(fn ($i) => $i['price'] * $i['qty']);
         $data['discount'] = session('coupon.discount', 0);
         $data['total'] = max(0, $data['subtotal'] - $data['discount']);
@@ -34,7 +65,6 @@ class CheckoutController extends Controller
         return view('pages.checkout',$data);
 
     }
-
 
     
 
@@ -54,17 +84,33 @@ public function placeOrder(Request $request)
 
         $subtotal = 0;
 
-        foreach ($cart as $item)
-
-            {
-
+        foreach ($cart as $item) {
             $product = Product::findOrFail($item['product_id']);
+            $availableStock = 0;
+            $variant = null;
 
-            if ($product->stock < $item['qty']) {
-                //throw new \Exception("Insufficient stock for {$product->name}");
+            if (!empty($item['variant_id'])) {
+                $variant = ProductVariant::where('product_id', $product->id)
+                    ->where('id', $item['variant_id'])
+                    ->lockForUpdate()
+                    ->first();
+                $availableStock = $variant ? (int)$variant->stock : 0;
+            } else {
+                $product = Product::where('id', $product->id)->lockForUpdate()->first();
+                $availableStock = (int)$product->stock;
             }
 
-            $subtotal += $product->offer_price * $item['qty'];
+            if ($availableStock < $item['qty']) {
+                $itemName = $product->name . (!empty($item['variant_name']) ? " ({$item['variant_name']})" : '');
+                if ($availableStock <= 0) {
+                    throw new \Exception("Sorry, '{$itemName}' is out of stock.");
+                } else {
+                    throw new \Exception("Maximum stocks selected for '{$itemName}'.");
+                }
+            }
+
+            $itemPrice = $item['price'] ?? ($variant ? $variant->selling_price : ($product->offer_price ?? $product->original_price));
+            $subtotal += $itemPrice * $item['qty'];
         }
 
         $discount = 0;
@@ -124,24 +170,44 @@ public function placeOrder(Request $request)
         ]);
 
         foreach ($cart as $item) {
+            $product = Product::findOrFail($item['product_id']);
+            $itemPrice = $item['price'] ?? $product->offer_price;
+            $title = $product->name . (!empty($item['variant_name']) ? ' (' . $item['variant_name'] . ')' : '');
 
-        $product = Product::findOrFail($item['product_id']);
+            $itemVariant = null;
+            if (!empty($item['variant_id'])) {
+                $itemVariant = ProductVariant::where('product_id', $product->id)->find($item['variant_id']);
+            }
+            $itemSku = $itemVariant?->sku ?? $product->sku;
 
             OrderItem::create([
-                'order_id'   => $order->id,
-                'product_id' => $product->id,
-                'title'      => $product->name,
-                'sku'        => null,
-                'quantity'   => $item['qty'],
-                'price'      => $product->offer_price,
-                'subtotal'   => $product->offer_price * $item['qty'],
-                'tax'        => 0,
-                'total'      => $product->offer_price * $item['qty'],
+                'order_id'           => $order->id,
+                'product_id'         => $product->id,
+                'product_variant_id' => $item['variant_id'] ?? null,
+                'variant_name'       => $item['variant_name'] ?? null,
+                'title'              => $title,
+                'sku'                => $itemSku,
+                'quantity'           => $item['qty'],
+                'price'              => $itemPrice,
+                'subtotal'           => $itemPrice * $item['qty'],
+                'tax'                => 0,
+                'total'              => $itemPrice * $item['qty'],
             ]);
+
+            // Decrement Stock
+            if (!empty($item['variant_id'])) {
+                $variant = ProductVariant::where('product_id', $product->id)->find($item['variant_id']);
+                if ($variant) {
+                    $variant->decrement('stock', $item['qty']);
+                }
+            }
+            if ($product->stock >= $item['qty']) {
+                $product->decrement('stock', $item['qty']);
+            }
         }
 
         // COD FLOW
-        if ($request->payment_method === 'cod') {
+        if ($request->payment_method === 'cod' || empty($request->payment_method)) {
 
             DB::commit();
 
@@ -153,7 +219,12 @@ public function placeOrder(Request $request)
         }
 
         // ONLINE PAYMENT (STRIPE)
-        Stripe::setApiKey(config('services.stripe.secret'));
+        $stripeSecret = config('services.stripe.secret');
+        if (empty($stripeSecret)) {
+            throw new \Exception("Online payment is currently unavailable. Please try again later or contact support.");
+        }
+
+        Stripe::setApiKey($stripeSecret);
 
         $session = StripeSession::create([
             'payment_method_types' => ['card'],
@@ -183,8 +254,6 @@ public function placeOrder(Request $request)
     } catch (\Exception $e) {
 
         DB::rollBack();
-
-        echo $e->getMessage(); exit;
 
         return back()->with('error', $e->getMessage());
     }

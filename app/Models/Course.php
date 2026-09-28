@@ -11,7 +11,6 @@ class Course extends Model
     public function students()
     {
         return $this->belongsToMany(Student::class, 'student_courses')
-                    ->withPivot('start_date', 'end_date')
                     ->withTimestamps();
     }
 

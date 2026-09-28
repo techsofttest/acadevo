@@ -65,12 +65,13 @@ class OrdersTable
 
             ])
             ->recordActions([
-                //Action::make('view')
-                    //->url(fn ($record) => route('filament.resources.order.view', $record)),
                 Action::make('print')
+                    ->label('Print')
                     ->icon('heroicon-o-printer')
-                    ->action(fn ($record) => OrderResource::print($record)),
-                ViewAction::make()
+                    ->color('gray')
+                    ->url(fn ($record) => route('orders.print', $record))
+                    ->openUrlInNewTab(),
+                ViewAction::make(),
             ])
                 
             ->toolbarActions([

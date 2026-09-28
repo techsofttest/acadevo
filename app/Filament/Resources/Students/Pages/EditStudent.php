@@ -13,6 +13,7 @@ class EditStudent extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            \App\Filament\Resources\Students\Actions\ChangeClassAction::make(),
             DeleteAction::make(),
         ];
     }
