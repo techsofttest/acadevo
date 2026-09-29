@@ -1,0 +1,5 @@
+"Product Name",Category,"Product SKU","Variant SKU",Value,Unit,"Strike Price","Selling Price",Stock,"Is Default",Description
+"Kashmiri Apple",Fruits,APP-KASH,APP-KASH-500G,500,g,150.00,120.00,50,1,"Fresh Kashmiri Apples"
+"Kashmiri Apple",Fruits,APP-KASH,APP-KASH-1KG,1,kg,280.00,220.00,30,0,"Fresh Kashmiri Apples"
+"Organic Honey",Grocery,HONEY-ORG,HONEY-250ML,250,ml,300.00,250.00,20,1,"Pure Organic Wild Forest Honey"
+"Organic Honey",Grocery,HONEY-ORG,HONEY-500ML,500,ml,550.00,480.00,15,0,"Pure Organic Wild Forest Honey"

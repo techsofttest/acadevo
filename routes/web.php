@@ -56,7 +56,10 @@ Route::post('/certificate/verify', [CertificateController::class, 'verify'])->na
 Route::post('/certificate/verify-otp', [CertificateController::class, 'verifyOtp'])->name('certificate.verifyOtp');
 Route::get('/certificate/generate/{student}', [CertificateController::class, 'generate'])->name('certificate.generate');
 Route::get('/admin/students/download-template', function () {
-    $path = base_path('FILES/Student Import.xlsx');
+    $path = public_path('templates/Student Import.xlsx');
+    if (!file_exists($path)) {
+        $path = base_path('FILES/Student Import.xlsx');
+    }
     if (!file_exists($path)) {
         abort(404, 'Template file not found.');
     }
@@ -64,7 +67,10 @@ Route::get('/admin/students/download-template', function () {
 })->name('admin.students.download-template');
 
 Route::get('/admin/products/download-template', function () {
-    $path = base_path('FILES/Product Import.xlsx');
+    $path = public_path('templates/Product Import.xlsx');
+    if (!file_exists($path)) {
+        $path = base_path('FILES/Product Import.xlsx');
+    }
     if (!file_exists($path)) {
         abort(404, 'Template file not found.');
     }

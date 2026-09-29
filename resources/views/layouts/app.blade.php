@@ -120,7 +120,7 @@
 
                 <div class="form-group col-md-12 mb-2">
                   <label class="form-label text-start d-block font-weight-bold" style="font-size:13px; color:#475569;">Enter OTP</label>
-                  <input type="text" name="otp" id="otpCodeInput" placeholder="Enter 4-digit OTP (0000)" maxlength="6" required style="letter-spacing:4px; text-align:center; font-weight:bold; font-size:18px;">
+                  <input type="text" name="otp" id="otpCodeInput" placeholder="Enter 4-digit OTP" maxlength="6" required style="letter-spacing:4px; text-align:center; font-weight:bold; font-size:18px;">
                   <div class="otp-error-msg text-danger text-start mt-1" style="font-size:12px;"></div>
                 </div>
 
@@ -571,7 +571,7 @@
                 },
                 success: function(response){
                     btn.text('Resend OTP');
-                    alertify.success('OTP sent successfully! (Dummy: 0000)').dismissOthers();
+                    alertify.success('OTP sent successfully!').dismissOthers();
                 },
                 error: function(){
                     btn.text('Resend OTP');

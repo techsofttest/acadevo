@@ -83,6 +83,63 @@ class ListProducts extends ListRecords
                     }
                 }),
 
+            Action::make('importImages')
+                ->label('Import Images (ZIP)')
+                ->icon('heroicon-o-photo')
+                ->color('info')
+                ->modalHeading('Import Product Images via ZIP')
+                ->modalDescription('Upload a .zip file containing product images. Images will be extracted to storage and automatically matched with products by SKU, slug, or product name (e.g. SKU.jpg, SKU-1.jpg, product-slug.png).')
+                ->modalSubmitActionLabel('Extract & Match Images')
+                ->form([
+                    FileUpload::make('zip_file')
+                        ->label('Select ZIP File')
+                        ->disk('local')
+                        ->directory('temp-product-zips')
+                        ->acceptedFileTypes([
+                            'application/zip',
+                            'application/x-zip-compressed',
+                            'multipart/x-zip',
+                        ])
+                        ->required()
+                        ->storeFiles(),
+                ])
+                ->action(function (array $data, \App\Services\ProductImageZipService $zipService) {
+                    $relativeFilePath = $data['zip_file'];
+                    $fullPath = Storage::disk('local')->path($relativeFilePath);
+
+                    try {
+                        $result = $zipService->import($fullPath);
+
+                        // Clean up temporary zip file
+                        Storage::disk('local')->delete($relativeFilePath);
+
+                        if (!empty($result['errors'])) {
+                            Notification::make()
+                                ->warning()
+                                ->title('Images extracted with warnings')
+                                ->body("Extracted: {$result['total_extracted']} images. Products updated: {$result['products_matched']}. Errors: " . count($result['errors']) . "\n" . implode("\n", array_slice($result['errors'], 0, 5)))
+                                ->persistent()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->success()
+                                ->title('Product Images Imported Successfully')
+                                ->body("Successfully extracted {$result['total_extracted']} image(s) to storage/products. Updated {$result['products_matched']} product(s).")
+                                ->send();
+                        }
+                    } catch (\Throwable $e) {
+                        if (Storage::disk('local')->exists($relativeFilePath)) {
+                            Storage::disk('local')->delete($relativeFilePath);
+                        }
+
+                        Notification::make()
+                            ->danger()
+                            ->title('ZIP Extraction Failed')
+                            ->body($e->getMessage())
+                            ->send();
+                    }
+                }),
+
             CreateAction::make(),
         ];
     }
