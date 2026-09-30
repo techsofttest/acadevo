@@ -209,7 +209,7 @@ class StudentImportService
                     ]);
                     $createdCount++;
 
-                    if (!empty($classVal)) {
+                     if (!empty($classVal)) {
                         app(\App\Services\Students\StudentClassService::class)->initializeHistory(
                             student: $student,
                             class: $classVal,
